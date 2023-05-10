@@ -158,6 +158,7 @@ resource "kubernetes_manifest" "statefulset_trivy_redis_redis_master" {
                 },
                 {
                   "mountPath" = "/data"
+                  # "name" = "redis-data"
                   "name" = "redis-data"
                 },
                 {
@@ -214,6 +215,12 @@ resource "kubernetes_manifest" "statefulset_trivy_redis_redis_master" {
               "emptyDir" = {}
               "name" = "tmp"
             },
+            {
+              "name" = "redis-data"
+              "persistentVolumeClaim" = {
+                "claimName" = "redis-data-redis-master-0"
+              }
+            },
           ]
         }
       }
@@ -223,32 +230,32 @@ resource "kubernetes_manifest" "statefulset_trivy_redis_redis_master" {
         }
         "type" = "RollingUpdate"
       }
-      "volumeClaimTemplates" = [
-        {
-          "apiVersion" = "v1"
-          "kind" = "PersistentVolumeClaim"
-          "metadata" = {
-            "creationTimestamp" = null
-            "labels" = {
-              "app.kubernetes.io/component" = "master"
-              "app.kubernetes.io/instance" = "redis"
-              "app.kubernetes.io/name" = "redis"
-            }
-            "name" = "redis-data"
-          }
-          "spec" = {
-            "accessModes" = [
-              "ReadWriteOnce",
-            ]
-            "resources" = {
-              "requests" = {
-                "storage" = "8Gi"
-              }
-            }
-            "volumeMode" = "Filesystem"
-          }
-        },
-      ]
+      # "volumeClaimTemplates" = [
+      #   {
+      #     "apiVersion" = "v1"
+      #     "kind" = "PersistentVolumeClaim"
+      #     "metadata" = {
+      #       "creationTimestamp" = null
+      #       "labels" = {
+      #         "app.kubernetes.io/component" = "master"
+      #         "app.kubernetes.io/instance" = "redis"
+      #         "app.kubernetes.io/name" = "redis"
+      #       }
+      #       "name" = "redis-data"
+      #     }
+      #     "spec" = {
+      #       "accessModes" = [
+      #         "ReadWriteOnce",
+      #       ]
+      #       "resources" = {
+      #         "requests" = {
+      #           "storage" = "8Gi"
+      #         }
+      #       }
+      #       "volumeMode" = "Filesystem"
+      #     }
+      #   },
+      # ]
     }
   }
 }
@@ -394,6 +401,10 @@ resource "kubernetes_manifest" "statefulset_trivy_redis_trivy" {
               "emptyDir" = {}
               "name" = "tmp-data"
             },
+            {
+              "emptyDir" = {}
+              "name" = "data"
+            },
           ]
         }
       }
@@ -403,26 +414,26 @@ resource "kubernetes_manifest" "statefulset_trivy_redis_trivy" {
         }
         "type" = "RollingUpdate"
       }
-      "volumeClaimTemplates" = [
-        {
-          "apiVersion" = "v1"
-          "kind" = "PersistentVolumeClaim"
-          "metadata" = {
-            "name" = "data"
-          }
-          "spec" = {
-            "accessModes" = [
-              "ReadWriteOnce",
-            ]
-            "resources" = {
-              "requests" = {
-                "storage" = "5Gi"
-              }
-            }
-            "volumeMode" = "Filesystem"
-          }
-        },
-      ]
+      # "volumeClaimTemplates" = [
+      #   {
+      #     "apiVersion" = "v1"
+      #     "kind" = "PersistentVolumeClaim"
+      #     "metadata" = {
+      #       "name" = "data"
+      #     }
+      #     "spec" = {
+      #       "accessModes" = [
+      #         "ReadWriteOnce",
+      #       ]
+      #       "resources" = {
+      #         "requests" = {
+      #           "storage" = "5Gi"
+      #         }
+      #       }
+      #       "volumeMode" = "Filesystem"
+      #     }
+      #   },
+      # ]
     }
   }
   depends_on = [ 
